@@ -1,6 +1,9 @@
 package com.globel.system.repository;
 
-public class UserRepo {
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class UserRepo  {
 
 	
 	
