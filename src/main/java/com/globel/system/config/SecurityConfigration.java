@@ -27,49 +27,40 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfigration {
 
-	
-	private final JWTAuthFilter jWTAuthFilter ;
-	
-	
-	private final UserService userService ;
-	
-	
+	private final JWTAuthFilter jWTAuthFilter;
+
+	private final UserService userService;
+
 	@Bean
-	public SecurityFilterChain  securityFilterChain(HttpSecurity http ) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
-		.authorizeHttpRequests(RequestMapping -> RequestMapping.requestMatchers("/api/v1/auth/**")
-				.permitAll()
-				.requestMatchers("/api/v1/admin").hasAuthority(Role.ADMIN.name())
-				.requestMatchers("/api/v1/user").hasAuthority(Role.USER.name())
-				.anyRequest().authenticated())
-				
-			.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider()).addFilterBefore(
-            		jWTAuthFilter , UsernamePasswordAuthenticationFilter.class
-			);
-		  return http.build();
-		}
-	
- 	@Bean
+				.authorizeHttpRequests(RequestMapping -> RequestMapping.requestMatchers("/api/v1/auth/**").permitAll()
+						.requestMatchers("/api/v1/admin").hasAuthority(Role.ADMIN.name())
+						.requestMatchers("/api/v1/user").hasAuthority(Role.USER.name()).anyRequest().authenticated())
+
+				.sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authenticationProvider(authenticationProvider())
+				.addFilterBefore(jWTAuthFilter, UsernamePasswordAuthenticationFilter.class);
+		return http.build();
+	}
+
+	@Bean
 	public AuthenticationProvider authenticationProvider() {
+
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userService.userDetailsService());
 		authenticationProvider.setPasswordEncoder(passwordEncoder());
-		return authenticationProvider ;
+		return authenticationProvider;
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
+
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) 
-		throws Exception{
-			return config.getAuthenticationManager();
-		}
-	
-	
-	
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
+
 }
