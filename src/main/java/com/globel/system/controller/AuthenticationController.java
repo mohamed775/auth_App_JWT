@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.globel.system.dto.JWTAuthenticatedResponse;
+import com.globel.system.dto.RefreshToken;
 import com.globel.system.dto.SignUpRequest;
 import com.globel.system.dto.SigninRequest;
 import com.globel.system.entity.User;
@@ -33,5 +34,11 @@ public class AuthenticationController {
 	public ResponseEntity<JWTAuthenticatedResponse> signin(@RequestBody SigninRequest SigninRequest) {
 		
 		return ResponseEntity.ok(authenticationService.signin(SigninRequest));
+	}
+	
+	@PostMapping("/refresh")
+	public ResponseEntity<JWTAuthenticatedResponse> refresh(@RequestBody RefreshToken refreshToken) {
+		
+		return ResponseEntity.ok(authenticationService.refreshToken(refreshToken));
 	}
 }

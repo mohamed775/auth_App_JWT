@@ -61,7 +61,7 @@ public class JWTServiceImpl implements JWTService {
 	}
 	
 	private Key getSignKey() {
-		byte[] key = Decoders.BASE64.decode("Gp4lyY4MyEd0wqRWMuuWfcgUO3X8ZbKz3TcbOZCtR_Xjv8Aa-jjP8mN4c6XZQuUv\r\n"
+		byte[] key = Decoders.BASE64.decode("Gp4lyY4MyEd0wqRWMuuWfcgUO3X8ZbKz3TcbOZCtRXjv8AajjP8mN4c6XZQuUv"
 				+ "");
 		return Keys.hmacShaKeyFor(key);
 	}

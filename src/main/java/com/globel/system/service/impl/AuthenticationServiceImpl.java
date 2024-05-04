@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.globel.system.dto.JWTAuthenticatedResponse;
+import com.globel.system.dto.RefreshToken;
 import com.globel.system.dto.SignUpRequest;
 import com.globel.system.dto.SigninRequest;
 import com.globel.system.entity.Role;
@@ -31,7 +32,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	
 	private final JWTService jWTService ;
 	
-	private final JWTAuthenticatedResponse jWTAuthenticatedResponse ;
 
 	
 	
@@ -52,13 +52,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	public  JWTAuthenticatedResponse signin(SigninRequest signing ) {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signing.getEmail(), signing.getPassword()));
 		
-		var user = userRepo.findByEmail(signing.getEmail()).orElseThrow(()-> new IllegalArgumentException("invaild email or password"));
+		var user = userRepo.findByEmail(signing.getEmail()).orElseThrow( ()-> new IllegalArgumentException("invaild email or password"));
 	    var jwt = jWTService.generateToken(user) ;
 	    var refreshToken = jWTService.generateRefreshToken(new HashMap<>(), user) ;
+	    
+	    JWTAuthenticatedResponse jWTAuthenticatedResponse = new JWTAuthenticatedResponse();
 	    
 	    jWTAuthenticatedResponse.setToken(jwt);
 	    jWTAuthenticatedResponse.setRefreshToken(refreshToken);
 	    
 	    return  jWTAuthenticatedResponse ;
 	}
+	
+	public JWTAuthenticatedResponse refreshToken(RefreshToken refreshToken) {
+		String userEmail = jWTService.extractuserName(refreshToken.getToken());
+		User user = userRepo.findByEmail(userEmail).orElseThrow();
+		if(jWTService.isTokenValid(refreshToken.getToken(), user)) {
+			var jwt = jWTService.generateToken(user);
+			
+			JWTAuthenticatedResponse jWTAuthenticatedResponse = new JWTAuthenticatedResponse();
+		    
+		    jWTAuthenticatedResponse.setToken(jwt);
+		    jWTAuthenticatedResponse.setRefreshToken(refreshToken.getToken());
+		    
+		    return  jWTAuthenticatedResponse ;
+		}
+		return null ;
+	}
+	
+	
 }
