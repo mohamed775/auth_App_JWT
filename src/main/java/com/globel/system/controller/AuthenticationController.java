@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.globel.system.dto.JWTAuthenticatedResponse;
 import com.globel.system.dto.SignUpRequest;
+import com.globel.system.dto.SigninRequest;
 import com.globel.system.entity.User;
 import com.globel.system.service.AuthenticationService;
 
@@ -27,5 +29,9 @@ public class AuthenticationController {
 		return ResponseEntity.ok(authenticationService.singUp(signUpRequest));
 	}
 	
-	
+	@PostMapping("/signin")
+	public ResponseEntity<JWTAuthenticatedResponse> signin(@RequestBody SigninRequest SigninRequest) {
+		
+		return ResponseEntity.ok(authenticationService.signin(SigninRequest));
+	}
 }

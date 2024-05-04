@@ -31,6 +31,7 @@ public class User implements UserDetails {
 	
 	
 	private String firstName ;
+	
 	private String secondName ;
 	
 	private String email ;
