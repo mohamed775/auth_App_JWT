@@ -7,6 +7,8 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.globel.system.service.JWTService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,10 +16,10 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
-public class JWTServiceImpl {
+public class JWTServiceImpl implements JWTService {
 
 	
-	private String generateToken(UserDetails userDetails) {
+	public String generateToken(UserDetails userDetails) {
 		return Jwts.builder()
 				.setSubject(userDetails.getUsername())
 				.setIssuedAt(new Date(System.currentTimeMillis()))
@@ -27,7 +29,7 @@ public class JWTServiceImpl {
 	}
 	
 	
-	private String extractuserName(String token) {
+	public String extractuserName(String token) {
 		return extractClaim(token, Claims::getSubject);
 	}
 	
@@ -52,6 +54,15 @@ public class JWTServiceImpl {
 		byte[] key = Decoders.BASE64.decode("Gp4lyY4MyEd0wqRWMuuWfcgUO3X8ZbKz3TcbOZCtR_Xjv8Aa-jjP8mN4c6XZQuUv\r\n"
 				+ "");
 		return Keys.hmacShaKeyFor(key);
+	}
+	
+	public boolean isTokenValid (String token , UserDetails userDetails) {
+		final String username = extractuserName(token);
+		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
+	
+	private boolean isTokenExpired(String token) {
+		return extractClaim(token, Claims::getExpiration).before(new Date());
 	}
 	
 	

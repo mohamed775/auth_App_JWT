@@ -1,10 +1,17 @@
 package com.globel.system.repository;
 
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public class UserRepo  {
+import com.globel.system.entity.User;
 
+
+@Repository
+public interface UserRepo extends JpaRepository<User, Long>  {
+
+	Optional<User> findByEmail(String email);
 	
 	
 }
